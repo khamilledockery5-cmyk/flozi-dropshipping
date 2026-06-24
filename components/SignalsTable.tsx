@@ -1,4 +1,4 @@
-import type { Signal } from "@/app/api/signals/route";
+import type { Signal } from "@/lib/types";
 
 function recColor(rec: Signal["recommendation"]) {
   if (rec === "Buy") return "text-up";
