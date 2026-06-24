@@ -36,7 +36,11 @@ export default function SignalsTable({ signals }: { signals: Signal[] }) {
         </thead>
         <tbody>
           {signals.map((s) => (
-            <tr key={s.symbol} className="border-b border-white/5 last:border-0">
+            <tr
+              key={s.symbol}
+              className="border-b border-white/5 last:border-0"
+              title={s.rationale}
+            >
               <td className="px-4 py-3">
                 <div className="font-medium">{s.symbol}</div>
                 <div className="text-xs text-slate-500">{s.name}</div>

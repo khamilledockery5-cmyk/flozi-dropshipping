@@ -31,7 +31,7 @@ export async function runCycle(): Promise<CycleResult> {
   const s = store();
   const at = new Date().toISOString();
   const broker = getBroker();
-  const signals = getSignals();
+  const signals = await getSignals();
   const matches = evaluateRules(s.rules, signals);
 
   const alerts: Alert[] = [];

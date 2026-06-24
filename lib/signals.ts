@@ -1,48 +1,76 @@
+import { getMarketDataProvider } from "./marketdata";
+import type { WatchlistItem } from "./marketdata";
+import { getSentimentProvider } from "./sentiment";
+import type { SentimentResult } from "./sentiment";
+import { recommend } from "./sentiment/types";
 import type { Signal } from "./types";
 
-// Deterministic base data. A small pseudo-random walk is layered on top at read
-// time so the dashboard's auto-refresh shows live movement. Swap this module for
-// a real market-data + model integration when you're ready to go live.
-const BASE: Signal[] = [
-  { symbol: "AAPL", name: "Apple", price: 214.32, changePct: 1.24, sentiment: 0.62, recommendation: "Buy" },
-  { symbol: "TSLA", name: "Tesla", price: 178.91, changePct: -2.13, sentiment: -0.18, recommendation: "Hold" },
-  { symbol: "NVDA", name: "Nvidia", price: 126.45, changePct: 3.41, sentiment: 0.81, recommendation: "Buy" },
-  { symbol: "MSFT", name: "Microsoft", price: 447.12, changePct: 0.42, sentiment: 0.35, recommendation: "Hold" },
-  { symbol: "AMZN", name: "Amazon", price: 189.05, changePct: -0.87, sentiment: 0.11, recommendation: "Hold" },
-  { symbol: "META", name: "Meta", price: 502.30, changePct: 2.05, sentiment: 0.54, recommendation: "Buy" },
+// The instruments the app tracks. The base values are used as fallbacks when no
+// live market-data source is configured (or a fetch fails).
+const WATCHLIST: WatchlistItem[] = [
+  { symbol: "AAPL", name: "Apple", basePrice: 214.32, baseChangePct: 1.24 },
+  { symbol: "TSLA", name: "Tesla", basePrice: 178.91, baseChangePct: -2.13 },
+  { symbol: "NVDA", name: "Nvidia", basePrice: 126.45, baseChangePct: 3.41 },
+  { symbol: "MSFT", name: "Microsoft", basePrice: 447.12, baseChangePct: 0.42 },
+  { symbol: "AMZN", name: "Amazon", basePrice: 189.05, baseChangePct: -0.87 },
+  { symbol: "META", name: "Meta", basePrice: 502.3, baseChangePct: 2.05 },
 ];
 
-function recommend(sentiment: number): Signal["recommendation"] {
-  if (sentiment >= 0.4) return "Buy";
-  if (sentiment <= -0.3) return "Sell";
-  return "Hold";
+function ttlMs(): number {
+  return Math.max(5, Number(process.env.SIGNALS_TTL_SEC ?? 30)) * 1000;
 }
 
-function jitter(seed: number, scale: number): number {
-  // Cheap deterministic-ish noise based on the current minute so repeated calls
-  // within a refresh window stay stable but evolve over time.
-  const t = Math.sin(seed * 12.9898 + Date.now() / 60000) * 43758.5453;
-  return (t - Math.floor(t) - 0.5) * 2 * scale;
-}
+// Cache the combined snapshot to limit market-data and (paid) LLM calls — the
+// dashboard polls every few seconds but the underlying data refreshes slower.
+const g = globalThis as unknown as { __tradeAiSignals?: { at: number; signals: Signal[] } };
 
-/** Returns the current signal snapshot. */
-export function getSignals(): Signal[] {
-  return BASE.map((s, i) => {
-    const sentiment = clamp(s.sentiment + jitter(i + 1, 0.08), -1, 1);
-    const changePct = s.changePct + jitter(i + 7, 0.4);
-    const price = round2(s.price * (1 + changePct / 100 - s.changePct / 100));
+/**
+ * Returns the current signal snapshot: live quotes scored for sentiment by the
+ * configured providers (mock + heuristic by default; Finnhub + Claude when keys
+ * are set). Cached for SIGNALS_TTL_SEC seconds.
+ */
+export async function getSignals(): Promise<Signal[]> {
+  const cached = g.__tradeAiSignals;
+  if (cached && Date.now() - cached.at < ttlMs()) return cached.signals;
+
+  const quotes = await getMarketDataProvider().getQuotes(WATCHLIST);
+
+  let scores: SentimentResult[];
+  try {
+    scores = await getSentimentProvider().score(quotes);
+  } catch {
+    scores = [];
+  }
+  const bySymbol = new Map(scores.map((s) => [s.symbol, s]));
+
+  const signals: Signal[] = quotes.map((q) => {
+    const s = bySymbol.get(q.symbol);
+    const sentiment = s ? s.sentiment : q.changePct / 5;
     return {
-      ...s,
-      price,
-      changePct: round2(changePct),
+      symbol: q.symbol,
+      name: q.name,
+      price: q.price,
+      changePct: q.changePct,
       sentiment: round2(sentiment),
-      recommendation: recommend(sentiment),
+      recommendation: s?.recommendation ?? recommend(sentiment),
+      rationale: s?.rationale,
     };
   });
+
+  g.__tradeAiSignals = { at: Date.now(), signals };
+  return signals;
 }
 
-function clamp(n: number, lo: number, hi: number): number {
-  return Math.max(lo, Math.min(hi, n));
+/** Names of the active data/sentiment providers, for display. */
+export function getSources() {
+  const market = getMarketDataProvider();
+  const sentiment = getSentimentProvider();
+  return {
+    market: market.name,
+    marketLive: market.live,
+    sentiment: sentiment.name,
+    sentimentAi: sentiment.ai,
+  };
 }
 
 function round2(n: number): number {

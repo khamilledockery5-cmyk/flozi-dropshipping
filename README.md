@@ -21,6 +21,29 @@ web app (App Router, TypeScript, Tailwind CSS).
 - **Live trade execution** — a pluggable broker adapter. Ships with a safe
   **paper (simulated) broker by default**; a live adapter is env-gated and
   unimplemented until you wire in your own broker.
+- **Pluggable data & sentiment** — market data and sentiment are provider
+  interfaces. Defaults are a simulated price feed and a price-action heuristic;
+  set keys to switch to **real Finnhub market data** and **Claude-generated
+  sentiment** (see below).
+
+## Data & sentiment sources
+
+Signals are produced by two swappable providers, selected from the environment:
+
+| Layer       | Default (no key)        | With key                                      |
+| ----------- | ----------------------- | --------------------------------------------- |
+| Market data | Simulated mock prices   | **Finnhub** live quotes (`FINNHUB_API_KEY`)   |
+| Sentiment   | Price-action heuristic  | **Claude API** (`ANTHROPIC_API_KEY`)          |
+
+- `lib/marketdata/` — `MockMarketData` (default) and `FinnhubMarketData`, behind
+  `getMarketDataProvider()`. Live fetches fall back per-symbol on failure.
+- `lib/sentiment/` — `HeuristicSentiment` (default) and `ClaudeSentiment`
+  (`claude-opus-4-8`, structured outputs), behind `getSentimentProvider()`.
+- `lib/signals.ts` combines them and caches the snapshot for `SIGNALS_TTL_SEC`
+  seconds (default 30) to limit market-data and paid LLM calls.
+
+The active sources are shown under the signals table and returned by
+`/api/signals`. See `.env.example` for all keys.
 
 ## Automation
 
@@ -89,7 +112,9 @@ components/
   AutomationPanel.tsx         Alerts / orders / activity + controls
 lib/
   types.ts                    Shared domain types
-  signals.ts                  Signal source (replace with real data)
+  signals.ts                  Combines market data + sentiment (cached)
+  marketdata/                 Market-data providers (mock + Finnhub)
+  sentiment/                  Sentiment providers (heuristic + Claude)
   rules.ts                    Strategy/rules engine
   engine.ts                   One automation cycle
   scheduler.ts                In-process interval scheduler
@@ -100,9 +125,10 @@ instrumentation.ts            Starts the scheduler on boot (opt-in)
 
 ## Next steps
 
-- Replace the sample data in `lib/signals.ts` with a real market-data provider.
-- Plug in an LLM (e.g. the Claude API) to generate the sentiment scores and
-  recommendations from news/filings.
+- Set `FINNHUB_API_KEY` and `ANTHROPIC_API_KEY` to enable real market data and
+  Claude-generated sentiment (or implement another provider in `lib/marketdata/`
+  / `lib/sentiment/`).
+- Feed the sentiment model richer context (news, filings) beyond price action.
 - Swap the in-memory `lib/store.ts` for a database to persist rules and history.
 - Implement `lib/brokers/live.ts` for your broker before enabling live trading.
 - Add auth and per-user watchlists, positions, and risk limits.

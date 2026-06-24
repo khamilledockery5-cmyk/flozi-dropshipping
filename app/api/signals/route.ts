@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
-import { getSignals } from "@/lib/signals";
+import { getSignals, getSources } from "@/lib/signals";
 
 export const dynamic = "force-dynamic";
 
-export function GET() {
-  return NextResponse.json({ signals: getSignals(), asOf: new Date().toISOString() });
+export async function GET() {
+  const signals = await getSignals();
+  return NextResponse.json({
+    signals,
+    sources: getSources(),
+    asOf: new Date().toISOString(),
+  });
 }

@@ -10,6 +10,8 @@ export interface Signal {
   /** AI-derived sentiment score from -1 (bearish) to 1 (bullish). */
   sentiment: number;
   recommendation: Recommendation;
+  /** One-line explanation for the sentiment/recommendation, when available. */
+  rationale?: string;
 }
 
 export type Side = "buy" | "sell";

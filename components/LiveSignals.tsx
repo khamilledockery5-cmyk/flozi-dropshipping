@@ -4,9 +4,17 @@ import { useEffect, useState } from "react";
 import SignalsTable from "@/components/SignalsTable";
 import type { Signal } from "@/lib/types";
 
+interface Sources {
+  market: string;
+  marketLive: boolean;
+  sentiment: string;
+  sentimentAi: boolean;
+}
+
 export default function LiveSignals() {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [asOf, setAsOf] = useState<string | null>(null);
+  const [sources, setSources] = useState<Sources | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -16,6 +24,7 @@ export default function LiveSignals() {
       const data = await res.json();
       setSignals(data.signals);
       setAsOf(data.asOf);
+      setSources(data.sources);
     };
     load();
     const t = setInterval(load, 5000); // auto-refresh every 5s
@@ -46,6 +55,19 @@ export default function LiveSignals() {
       )}
       {asOf && (
         <p className="text-xs text-slate-500">
+          {sources && (
+            <>
+              Data:{" "}
+              <span className={sources.marketLive ? "text-up" : "text-slate-400"}>
+                {sources.market}
+              </span>{" "}
+              · Sentiment:{" "}
+              <span className={sources.sentimentAi ? "text-accent" : "text-slate-400"}>
+                {sources.sentiment}
+              </span>{" "}
+              ·{" "}
+            </>
+          )}
           Auto-refreshing every 5s · as of {new Date(asOf).toLocaleTimeString()}
         </p>
       )}
