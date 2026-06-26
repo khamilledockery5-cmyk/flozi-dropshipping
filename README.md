@@ -120,3 +120,68 @@ broker API inside `bot.py` — but only after you have:
 - accepted that you can lose money regardless.
 
 Risk management protects you; it doesn't make you money. Trade responsibly.
+
+---
+
+# PineForge — AI Pine Script Generator 🌲⚡
+
+A second tool in this repo, inspired by [pinecode.ai](https://www.pinecode.ai):
+**describe a strategy in plain English and get back a ready-to-paste TradingView
+Pine Script v6 `strategy()`** — with the same risk discipline baked in (hard
+stop loss, take profit, and risk-based position sizing).
+
+```bash
+# From plain English (offline keyword parser — zero dependencies)
+python -m pineforge generate "buy when the 50 EMA crosses above the 200 EMA, 2% stop loss, risk 1%"
+
+# Start from a proven template
+python -m pineforge list
+python -m pineforge template ema_rsi_trend -o my_strategy.pine
+
+# Free-form descriptions via Claude (needs ANTHROPIC_API_KEY)
+python -m pineforge generate --ai "fade RSI extremes on BTC but only with the trend, 1.5% stop"
+```
+
+Paste the output into TradingView's Pine editor and hit **Add to chart** to
+backtest it.
+
+## How it works
+
+```
+plain English ──▶ StrategySpec (typed IR) ──▶ Pine Script v6 ──▶ validate
+                       ▲
+        ┌──────────────┴───────────────┐
+   offline keyword parser      Claude (claude-opus-4-8,
+   (parser.py, no deps)        structured outputs → ai.py)
+```
+
+PineForge always goes through a **validated structured spec**, never letting the
+model free-write code. That keeps generated scripts syntactically valid,
+reproducible, and auditable — the AI fills in a spec, the deterministic
+generator emits the Pine.
+
+**Supported building blocks:** EMA/SMA/RMA/WMA, RSI, MACD, Bollinger Bands, ATR,
+stdev, price series, and constants — combined with crossover/comparison rules.
+Pre-built templates: `ema_crossover`, `rsi_reversion`, `ema_rsi_trend`,
+`macd_trend`, `bollinger_breakout`.
+
+## Layout
+
+```
+pineforge/
+├── spec.py        # StrategySpec / Indicator / Rule (the typed IR)
+├── parser.py      # plain English → spec (offline keyword parser)
+├── ai.py          # plain English → spec via Claude (structured outputs)
+├── generator.py   # spec → TradingView Pine Script v6
+├── validator.py   # structural sanity checks on generated Pine
+├── library.py     # pre-built strategy templates
+└── cli.py         # `python -m pineforge ...`
+```
+
+The `--ai` mode requires the optional `anthropic` package (`pip install
+anthropic`) and an `ANTHROPIC_API_KEY`; without them PineForge automatically
+falls back to the offline parser, so it always works.
+
+> ⚠️ Same disclaimer as above: generated strategies are educational starting
+> points, not trading advice. Backtest thoroughly and never risk money you can't
+> afford to lose.

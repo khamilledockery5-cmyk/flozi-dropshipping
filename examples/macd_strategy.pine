@@ -1,0 +1,36 @@
+//@version=6
+strategy("MACD Trend", overlay=true, initial_capital=10000, currency=currency.USD, commission_type=strategy.commission.percent, commission_value=0.05, calc_on_order_fills=false, process_orders_on_close=true)
+
+// === Risk inputs (the 2% loss rule lives here) ===
+stopLossPct   = input.float(2.0, "Stop loss %", minval=0.1) / 100.0
+takeProfitPct = input.float(4.0, "Take profit %", minval=0.1) / 100.0
+riskPerTrade  = input.float(1.0, "Risk per trade %", minval=0.1) / 100.0
+
+// === Indicators ===
+[_macd0Line, _macd0Signal, _macd0Hist] = ta.macd(close, 12, 26, 9)
+macdLine = _macd0Line
+macdSig = _macd0Signal
+
+// === Signals ===
+longEntry  = (ta.crossover(macdLine, macdSig))
+longExit   = (ta.crossunder(macdLine, macdSig))
+
+// === Risk-based position sizing ===
+stopDist = close * stopLossPct
+// size so that being stopped out loses ~riskPerTrade of equity
+riskCapital = strategy.equity * riskPerTrade
+qty = stopDist > 0 ? riskCapital / stopDist : 0.0
+// never exceed 100% of equity in notional
+maxQty = strategy.equity / close
+qty := math.min(qty, maxQty)
+
+// === Orders ===
+if longEntry and strategy.position_size == 0 and qty > 0
+    strategy.entry("Long", strategy.long, qty=qty)
+    longStop = close - stopDist
+    longTP   = close * (1 + takeProfitPct)
+    strategy.exit("Long X", from_entry="Long", stop=longStop, limit=longTP)
+if longExit
+    strategy.close("Long")
+
+// === Plots ===
