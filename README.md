@@ -1,13 +1,23 @@
-# PowerpostFit — Prebuilt Dropshipping Store
+# PowerpostFit — Premium Home-Fitness Store (Prebuilt)
 
-A launch-ready home-fitness / gym-equipment dropshipping brand built on Shopify
-(`powerpostfit.myshopify.com`). This repo documents the store build: the product
-catalog, pricing/margin strategy, collection structure, SEO setup, and the steps
-left to flip it live.
+A launch-ready, **premium / luxury** home-fitness dropshipping brand on Shopify
+(`powerpostfit.myshopify.com`). This repo documents the store build: catalog,
+positioning, pricing, collections, SEO, storefront/theme, and the owner-only
+steps left to flip it live.
 
-> **Status:** Catalog, collections, pricing, images and on-page SEO are fully
-> built and **live (ACTIVE)** in Shopify. Remaining work is account-level setup
-> (payments, shipping, supplier connection, domain) — see the launch checklist.
+> **Status:** Catalog, collections, premium pricing, images, on-page SEO, the
+> luxury storefront copy, pages, navigation and a welcome discount are all
+> **built and live**. Remaining work is owner-only account setup (payments,
+> shipping rates, legal policies, domain) — see the launch checklist.
+
+---
+
+## Positioning: premium / luxury
+
+The brand is positioned as considered, premium home fitness — refined copy,
+clean confident pricing (no discount theatre), and an elegant storefront
+(Playfair Display headings on an ivory/charcoal palette). Product and homepage
+copy use an elevated, editorial voice ("Strength, beautifully engineered").
 
 ---
 
@@ -15,41 +25,44 @@ left to flip it live.
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Products | ✅ 17 live | Winning fitness products, ACTIVE, conversion-optimized copy |
-| Product images | ✅ Done | Professional fitness photos on Shopify CDN (swap for supplier photos) |
-| Sale pricing | ✅ Done | Compare-at prices on every product for urgency/anchoring |
+| Products | ✅ 17 live | Premium copy, ACTIVE, untracked (always sellable) |
+| Product images | ✅ Done | Pro fitness photos on Shopify CDN (swap for supplier photos) |
+| Premium pricing | ✅ Done | Clean luxury pricing, compare-at "sale" anchors removed |
 | SEO meta | ✅ Done | Keyword-rich SEO title + meta description on every product |
-| Collections | ✅ 7 live | Smart/auto-tag collections, each with SEO copy + cover image |
-| Inventory | ✅ Untracked | Always purchasable — correct for dropshipping |
-| Payments / Shipping | ⬜ To do | Account-level, see checklist |
-| Supplier / fulfillment | ⬜ To do | Connect AliExpress/CJ/Zendrop, see checklist |
+| Collections | ✅ 7 live | Smart/auto-tag, each with SEO copy + cover image |
+| Storefront (homepage) | ✅ Rewritten | Luxury copy across all live-theme sections; broken link fixed |
+| Pages | ✅ About + FAQ | Published |
+| Navigation | ✅ Done | Main menu → 7 collections; footer → About/FAQ/Search |
+| Welcome discount | ✅ WELCOME10 | 10% off, all customers, active |
+| Legal policies | ⬜ Owner | API lacks the legal-policy scope — set in Admin (templates) |
+| Payments / Shipping / Domain | ⬜ Owner | Account-level, see checklist |
 
 See [`docs/STORE-LAUNCH-GUIDE.md`](docs/STORE-LAUNCH-GUIDE.md) for the full guide
 and [`data/products.csv`](data/products.csv) for the catalog reference.
 
 ---
 
-## Catalog at a glance (17 products)
+## Catalog (17 products) — premium pricing
 
-| Product | Price | Compare-at | Role |
-|---------|------:|-----------:|------|
-| PowerFlex Adjustable Dumbbell Set | $89.99 | $159.99 | Hero / high-AOV |
-| FlexCore Resistance Bands (11-pc) | $34.99 | $69.99 | Best seller |
-| SculptBands Fabric Booty Bands (3-pk) | $24.99 | $49.99 | Impulse |
-| PulsePro Smart Jump Rope | $29.99 | $54.99 | Best seller / viral |
-| RecoverPro Percussion Massage Gun | $79.99 | $149.99 | Hero / high-AOV |
-| DeepRoll High-Density Foam Roller | $27.99 | $49.99 | Impulse |
-| CoreMax Ab Roller Wheel Kit | $26.99 | $49.99 | Impulse |
-| ZenFlex Non-Slip Yoga Mat | $39.99 | $69.99 | Mid |
-| PushPro Push-Up Board System | $32.99 | $59.99 | Mid |
-| IronGrip Doorway Pull-Up Bar | $36.99 | $64.99 | Mid |
-| FlexWeight Ankle & Wrist Weights | $29.99 | $54.99 | Impulse |
-| GripForge Hand Grip Strengthener Kit | $19.99 | $34.99 | Add-on |
-| PulseTrack Smart Fitness Watch | $49.99 | $99.99 | Best seller / tech |
-| HydraPower Gym Water Bottle 2.2L | $24.99 | $44.99 | Add-on |
-| SweatShape Waist Trainer Belt | $22.99 | $44.99 | Impulse |
-| PosturePro Posture Corrector | $21.99 | $39.99 | Impulse |
-| 12-Week Home Transformation Program | $19.99 | $49.99 | 100% margin (digital) |
+| Product | Price |
+|---------|------:|
+| PowerFlex Adjustable Dumbbell Set | $179.00 |
+| RecoverPro Percussion Massage Gun | $149.00 |
+| PulseTrack Smart Fitness Watch | $99.00 |
+| ZenFlex Non-Slip Yoga Mat | $79.00 |
+| IronGrip Doorway Pull-Up Bar | $69.00 |
+| FlexCore Resistance Bands (11-pc) | $59.00 |
+| PulsePro Smart Jump Rope | $59.00 |
+| PushPro Push-Up Board System | $59.00 |
+| FlexWeight Ankle & Wrist Weights | $55.00 |
+| DeepRoll High-Density Foam Roller | $49.00 |
+| CoreMax Ab Roller Wheel Kit | $49.00 |
+| SculptBands Fabric Booty Bands (3-pk) | $45.00 |
+| HydraPower Gym Water Bottle 2.2L | $45.00 |
+| PosturePro Posture Corrector | $45.00 |
+| GripForge Hand Grip Strengthener Kit | $39.00 |
+| SweatShape Waist Trainer Belt | $39.00 |
+| 12-Week Home Transformation Program | $39.00 |
 
 ---
 
@@ -63,13 +76,11 @@ and [`data/products.csv`](data/products.csv) for the catalog reference.
 6. **Gym Accessories & Tech** — `tag: gym accessories | gym bag essentials | wearable tech`
 7. **Digital Programs** — `tag: digital`
 
-Because they're rule-based, **any new product you tag is auto-sorted** into the
-right collections — no manual filing required.
+Rule-based, so any new tagged product is auto-sorted in.
 
 ---
 
 ## How this was built
 
-All store changes were made through the Shopify Admin API. The product / pricing /
-SEO data of record lives in Shopify; this repo is documentation plus a
-re-importable CSV.
+All store changes were made through the Shopify Admin API. The store is the data
+of record; this repo is documentation plus a re-importable CSV.
