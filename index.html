@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PowerpostFit — 7-Figure Business Plan Dashboard</title>
+<meta name="description" content="PowerpostFit Fitness & Posture dropship to private-label 7-figure business plan 2025–2027." />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0e1a;
+    --bg-2:#0f1424;
+    --card:#141a2e;
+    --card-2:#1a2138;
+    --line:#27304d;
+    --ink:#eef2ff;
+    --muted:#94a3c4;
+    --brand:#22d3ee;
+    --brand-2:#6366f1;
+    --accent:#f472b6;
+    --green:#34d399;
+    --amber:#fbbf24;
+    --red:#f87171;
+    --shadow:0 10px 40px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 600px at 80% -10%,rgba(99,102,241,.18),transparent 60%),
+               radial-gradient(900px 500px at 0% 0%,rgba(34,211,238,.12),transparent 55%),
+               var(--bg);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  .section{padding:46px 0;border-top:1px solid var(--line)}
+  .section:first-of-type{border-top:none}
+
+  /* Header */
+  header{
+    padding:40px 0 34px;
+    background:linear-gradient(180deg,rgba(99,102,241,.10),transparent);
+  }
+  .brand-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{
+    width:52px;height:52px;border-radius:14px;
+    background:conic-gradient(from 200deg,var(--brand),var(--brand-2),var(--accent),var(--brand));
+    display:grid;place-items:center;font-weight:900;font-size:24px;color:#06121f;
+    box-shadow:var(--shadow);
+  }
+  h1{font-size:30px;letter-spacing:.3px;font-weight:800}
+  .subtitle{color:var(--muted);font-size:14px;margin-top:4px}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .pill{
+    font-size:11px;font-weight:700;letter-spacing:.6px;
+    padding:7px 12px;border-radius:999px;border:1px solid var(--line);
+    background:var(--card);color:var(--brand);text-transform:uppercase;
+  }
+  .market-banner{
+    margin-top:22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    background:linear-gradient(90deg,rgba(34,211,238,.10),rgba(99,102,241,.05));
+    border:1px solid var(--line);border-radius:16px;padding:18px 22px;
+  }
+  .market-banner .big{font-size:26px;font-weight:900;color:var(--brand)}
+  .market-banner .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+
+  /* KPI grid */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:24px}
+  .kpi{
+    background:linear-gradient(180deg,var(--card),var(--bg-2));
+    border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .kpi::after{content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;
+    background:radial-gradient(120px 80px at 100% 0,rgba(34,211,238,.10),transparent 70%)}
+  .kpi .v{font-size:30px;font-weight:900;letter-spacing:.4px}
+  .kpi .k{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+  .kpi .d{font-size:12px;color:var(--muted);margin-top:8px;opacity:.85}
+  .kpi.green .v{color:var(--green)}
+  .kpi.brand .v{color:var(--brand)}
+  .kpi.accent .v{color:var(--accent)}
+
+  /* Section headings */
+  .sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+  .sec-head h2{font-size:19px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+  .sec-head .tag{font-size:11px;color:var(--brand);border:1px solid var(--line);
+    padding:4px 10px;border-radius:999px;background:var(--card);letter-spacing:.5px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;box-shadow:var(--shadow)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .note{color:var(--muted);font-size:14px;margin-top:14px}
+
+  .chart-box{position:relative;height:360px}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}
+  thead th{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);
+    background:var(--card-2)}
+  tbody tr:hover{background:rgba(99,102,241,.06)}
+  td .stars{color:var(--amber);letter-spacing:1px}
+  .tier{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;display:inline-block}
+  .tier.Hero{background:rgba(244,114,182,.16);color:var(--accent)}
+  .tier.Core{background:rgba(34,211,238,.14);color:var(--brand)}
+  .tier.Growth{background:rgba(52,211,153,.14);color:var(--green)}
+  td.num{font-variant-numeric:tabular-nums;text-align:right}
+  .pl-net td{font-weight:800;color:var(--green);border-top:2px solid var(--line)}
+  .neg{color:var(--red)}
+
+  /* Roadmap */
+  .roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .phase{background:linear-gradient(180deg,var(--card),var(--bg-2));border:1px solid var(--line);
+    border-radius:16px;padding:22px;box-shadow:var(--shadow);position:relative}
+  .phase .num{font-size:12px;font-weight:800;color:var(--brand);letter-spacing:1px}
+  .phase h3{font-size:16px;margin:6px 0 2px;font-weight:800}
+  .phase .when{font-size:12px;color:var(--muted);margin-bottom:12px}
+  .phase p{font-size:13.5px;color:#cdd6f4}
+  .milestone{margin-top:16px;font-size:12px;font-weight:700;color:#06121f;
+    background:linear-gradient(90deg,var(--brand),var(--brand-2));border-radius:10px;
+    padding:9px 12px;letter-spacing:.4px}
+
+  /* Risk badges */
+  .badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;display:inline-block}
+  .lvl-Low{background:rgba(52,211,153,.14);color:var(--green)}
+  .lvl-Medium{background:rgba(251,191,36,.14);color:var(--amber)}
+  .lvl-High{background:rgba(248,113,113,.16);color:var(--red)}
+  .lvl-LowMed{background:rgba(251,191,36,.12);color:var(--amber)}
+
+  footer{padding:40px 0 60px;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--line)}
+  footer a{color:var(--brand);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+
+  @media (max-width:820px){
+    .grid-2{grid-template-columns:1fr}
+    .roadmap{grid-template-columns:1fr}
+    h1{font-size:24px}
+    .table-scroll{overflow-x:auto}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand-row">
+      <div class="logo">P</div>
+      <div>
+        <h1>PowerpostFit</h1>
+        <div class="subtitle">Fitness &amp; Posture · Dropship → Private Label · 7-Figure Business Plan 2025–2027</div>
+      </div>
+    </div>
+
+    <div class="pills">
+      <span class="pill">Fitness &amp; Posture</span>
+      <span class="pill">Hybrid DTC Model</span>
+      <span class="pill">AI-Optimized Store</span>
+      <span class="pill">TikTok + Meta + Affiliates</span>
+    </div>
+
+    <div class="market-banner">
+      <div>
+        <div class="big">$12.1B → $22.7B</div>
+        <div class="lbl">E-Commerce Fitness Market 2025 → 2030</div>
+      </div>
+      <div style="border-left:1px solid var(--line);padding-left:18px">
+        <div class="lbl">7.34% CAGR · 50% of posture sales now online</div>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi green">
+        <div class="v">$400,000</div>
+        <div class="k">Year 1 Revenue Target</div>
+        <div class="d">Conservative · Hybrid model COGS 32%</div>
+      </div>
+      <div class="kpi brand">
+        <div class="v">50 Products</div>
+        <div class="k">Total SKUs</div>
+        <div class="d">6 posture &amp; fitness sub-niches</div>
+      </div>
+      <div class="kpi accent">
+        <div class="v">68%</div>
+        <div class="k">Blended Gross Margin</div>
+        <div class="d">AOV target $60–$75 with bundles</div>
+      </div>
+      <div class="kpi">
+        <div class="v">$8,000</div>
+        <div class="k">Startup Budget</div>
+        <div class="d">Lean launch · store already live</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MARKET OPPORTUNITY -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Market Opportunity — Sub-Niche Demand Analysis</h2>
+      <span class="tag">Live 2025 Research</span>
+    </div>
+    <div class="card">
+      <p style="font-size:15px;color:#cdd6f4">
+        <strong style="color:var(--brand)">Posture Correction Market:</strong>
+        $1.66B (2024) → $2.76B by 2032 at <strong>6.5% CAGR</strong>.
+        50% of posture product sales are now online. Smart wearables &amp; AI posture tech are the
+        fastest-growing segment at <strong>7.7% CAGR</strong>. Remote work is driving a chronic
+        back/neck pain epidemic — a powerful and permanent tailwind for PowerpostFit.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- REVENUE PROJECTION -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>36-Month Revenue &amp; Net Profit Projection</h2>
+      <span class="tag">Hybrid Model</span>
+    </div>
+    <div class="card">
+      <div class="chart-box"><canvas id="revChart"></canvas></div>
+      <p class="note">Month 36 target: <strong style="color:var(--brand)">$450,000</strong> monthly revenue ·
+        <strong style="color:var(--green)">$195,000</strong> net profit (≈43% net margin at scale).</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT CATALOG -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Product Catalog — 50 SKUs Across 6 Categories</h2>
+    </div>
+    <div class="card table-scroll">
+      <table id="catalog">
+        <thead>
+          <tr><th>Category</th><th>SKUs</th><th>Avg Margin</th><th>Viral Score</th><th>Tier</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- P&L + MARKETING -->
+<section class="section">
+  <div class="wrap">
+    <div class="grid-2">
+      <div>
+        <div class="sec-head"><h2>3-Year P&amp;L</h2><span class="tag">COGS 32% → 28%</span></div>
+        <div class="card table-scroll">
+          <table id="pnl">
+            <thead><tr><th>Metric</th><th class="num">Year 1</th><th class="num">Year 2</th><th class="num">Year 3</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="sec-head"><h2>Marketing Channels</h2><span class="tag">ROAS vs Budget %</span></div>
+        <div class="card">
+          <div class="chart-box"><canvas id="mktChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head"><h2>Growth Roadmap — Path to 7 Figures</h2></div>
+    <div class="roadmap">
+      <div class="phase">
+        <div class="num">PHASE 1 — FOUNDATION</div>
+        <h3>Launch &amp; Test</h3>
+        <div class="when">Months 1–3</div>
+        <p>Launch 20 hero posture SKUs. Run $2K/mo TikTok + Meta ad tests on the live store.
+           Recruit 50 TikTok Shop affiliates. Set up all Klaviyo flows. Identify winners at &gt;3x ROAS.</p>
+        <div class="milestone">★ 2 winning hero products</div>
+      </div>
+      <div class="phase">
+        <div class="num">PHASE 2 — SCALE WINNERS</div>
+        <h3>Scale &amp; Expand</h3>
+        <div class="when">Months 4–12</div>
+        <p>Scale winning ad sets. Expand to all 50 SKUs. Begin white-label for top 5 products.
+           Recruit 200+ TikTok affiliates. Launch bundle pages to push AOV to $70+. Hire VA &amp; content creator.</p>
+        <div class="milestone">★ Email list 15K+ subscribers</div>
+      </div>
+      <div class="phase">
+        <div class="num">PHASE 3 — BRAND AUTHORITY</div>
+        <h3>Build the Brand</h3>
+        <div class="when">Months 13–24</div>
+        <p>Launch 2 private-label posture hero products. Expand to Google Shopping &amp; YouTube.
+           Build the PowerpostFit community. Launch subscription for consumables. Hit $1M annual run rate.</p>
+        <div class="milestone">★ $3M–$5M brand valuation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RISK -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head"><h2>Risk Analysis &amp; Mitigation</h2></div>
+    <div class="card table-scroll">
+      <table id="risk">
+        <thead><tr><th>Risk</th><th>Probability</th><th>Impact</th><th>Mitigation</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    PowerpostFit · 7-Figure Business Plan 2025–2027 ·
+    Live store: <a href="https://jr0qp9-e0.myshopify.com" target="_blank" rel="noopener">jr0qp9-e0.myshopify.com</a>
+    <br/>Hybrid DTC model · Dropship → Private Label · AI-optimized store
+  </div>
+</footer>
+
+<script>
+/* ---------- Data ---------- */
+const catalog = [
+  ["Posture &amp; Back Correction", 12, "65–70%", 5, "Hero"],
+  ["Pain Relief &amp; Recovery",     10, "67–75%", 5, "Hero"],
+  ["Home Gym Equipment",         10, "58–68%", 4, "Core"],
+  ["Activewear &amp; Compression",   10, "65–72%", 4, "Core"],
+  ["Smart Fitness Tech",          5, "58–65%", 4, "Growth"],
+  ["Wellness &amp; Supplements",      3, "70–75%", 4, "Growth"],
+];
+
+const pnl = [
+  ["Gross Revenue", "$400,000", "$1,600,000", "$4,500,000", false],
+  ["COGS",          "($128K)",  "($512K)",    "($1,260K)",  true],
+  ["Gross Profit",  "$272,000", "$1,088,000", "$3,240,000", false],
+  ["Ad Spend",      "($120K)",  "($416K)",    "($900K)",    true],
+  ["Team &amp; Ops",    "($48K)",   "($144K)",    "($360K)",    true],
+  ["Apps &amp; Tech",   "($14K)",   "($20K)",     "($28K)",     true],
+];
+const pnlNet = ["Net Profit", "$90,000", "$508,000", "$1,952,000"];
+const pnlMargin = ["Net Margin", "22.5%", "31.8%", "43.4%"];
+
+const risks = [
+  ["TikTok/Meta ad account ban", "Medium", "High", "Maintain backup accounts; diversify to Google Shopping early"],
+  ["Supplier stock/quality issues", "Medium", "Medium", "2–3 backup suppliers per SKU; pre-test before scaling ad spend"],
+  ["ROAS decline (iOS signal loss)", "High", "Medium", "Build owned channels: Klaviyo email, SMS, TikTok organic"],
+  ["Competitor copies winning SKUs", "High", "Low–Med", "Move top 5 products to private label by Month 6"],
+  ["Shipping delays (China suppliers)", "Medium", "High", "Transition top SKUs to US 3PL (ShipBob) by Month 4"],
+  ["Cash flow constraints while scaling", "Medium", "High", "Use Shopify Capital or Clearco revenue-based financing"],
+];
+
+/* ---------- Render tables ---------- */
+const stars = n => "★".repeat(n) + "☆".repeat(5 - n);
+
+document.querySelector("#catalog tbody").innerHTML = catalog.map(r => `
+  <tr>
+    <td>${r[0]}</td>
+    <td class="num">${r[1]}</td>
+    <td>${r[2]}</td>
+    <td><span class="stars">${stars(r[3])}</span></td>
+    <td><span class="tier ${r[4]}">${r[4]}</span></td>
+  </tr>`).join("");
+
+let pnlRows = pnl.map(r => `
+  <tr>
+    <td>${r[0]}</td>
+    <td class="num ${r[4]?'neg':''}">${r[1]}</td>
+    <td class="num ${r[4]?'neg':''}">${r[2]}</td>
+    <td class="num ${r[4]?'neg':''}">${r[3]}</td>
+  </tr>`).join("");
+pnlRows += `<tr class="pl-net"><td>${pnlNet[0]}</td><td class="num">${pnlNet[1]}</td><td class="num">${pnlNet[2]}</td><td class="num">${pnlNet[3]}</td></tr>`;
+pnlRows += `<tr><td style="color:var(--muted)">${pnlMargin[0]}</td><td class="num" style="color:var(--brand)">${pnlMargin[1]}</td><td class="num" style="color:var(--brand)">${pnlMargin[2]}</td><td class="num" style="color:var(--brand)">${pnlMargin[3]}</td></tr>`;
+document.querySelector("#pnl tbody").innerHTML = pnlRows;
+
+const lvlClass = s => "lvl-" + s.replace(/[^A-Za-z]/g,"");
+document.querySelector("#risk tbody").innerHTML = risks.map(r => `
+  <tr>
+    <td>${r[0]}</td>
+    <td><span class="badge ${lvlClass(r[1])}">${r[1]}</span></td>
+    <td><span class="badge ${lvlClass(r[2])}">${r[2]}</span></td>
+    <td style="color:#cdd6f4">${r[3]}</td>
+  </tr>`).join("");
+
+/* ---------- Charts ---------- */
+Chart.defaults.color = "#94a3c4";
+Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
+
+const months = Array.from({length:36}, (_,i)=>i+1);
+// Smooth growth curve to ~$450K revenue / ~$195K profit by M36
+const revData = months.map(m => Math.round(8000 * Math.pow(1.122, m-1)));
+const profitData = months.map((m,i)=> Math.round(revData[i] * (0.10 + 0.33*((m-1)/35))));
+
+const gradient = (ctx, c1, c2) => {
+  const g = ctx.createLinearGradient(0,0,0,360);
+  g.addColorStop(0,c1); g.addColorStop(1,c2); return g;
+};
+
+const revCtx = document.getElementById("revChart").getContext("2d");
+new Chart(revCtx, {
+  type:"line",
+  data:{
+    labels:months,
+    datasets:[
+      {label:"Monthly Revenue ($)", data:revData, borderColor:"#22d3ee",
+       backgroundColor:gradient(revCtx,"rgba(34,211,238,.35)","rgba(34,211,238,0)"),
+       borderWidth:3, fill:true, tension:.35, pointRadius:0, pointHoverRadius:5},
+      {label:"Net Profit ($)", data:profitData, borderColor:"#34d399",
+       backgroundColor:gradient(revCtx,"rgba(52,211,153,.25)","rgba(52,211,153,0)"),
+       borderWidth:3, fill:true, tension:.35, pointRadius:0, pointHoverRadius:5},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:"index",intersect:false},
+    plugins:{
+      legend:{labels:{usePointStyle:true,boxWidth:8,padding:18}},
+      tooltip:{callbacks:{
+        title:items=>"Month "+items[0].label,
+        label:c=>c.dataset.label+": $"+c.parsed.y.toLocaleString()
+      }}
+    },
+    scales:{
+      x:{grid:{color:"rgba(39,48,77,.5)"},
+         ticks:{callback:(v,i)=>[0,5,10,20,35].includes(i)?"M"+(i+1):"",maxRotation:0}},
+      y:{grid:{color:"rgba(39,48,77,.5)"},
+         ticks:{callback:v=>"$"+(v/1000)+"K"}}
+    }
+  }
+});
+
+const mkt = [
+  {name:"TikTok Ads",            roas:3.4, budget:38},
+  {name:"Meta Ads",              roas:3.0, budget:27},
+  {name:"TikTok Shop Affiliates",roas:5.2, budget:15},
+  {name:"Email & SMS",           roas:18,  budget:8},
+  {name:"Google Shopping",       roas:4.1, budget:12},
+];
+new Chart(document.getElementById("mktChart"), {
+  type:"bar",
+  data:{
+    labels:mkt.map(m=>m.name),
+    datasets:[
+      {label:"Target ROAS (x)", data:mkt.map(m=>m.roas), backgroundColor:"#22d3ee", borderRadius:6},
+      {label:"Budget %",        data:mkt.map(m=>m.budget), backgroundColor:"#6366f1", borderRadius:6},
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{labels:{usePointStyle:true,boxWidth:8,padding:16}}},
+    scales:{
+      x:{grid:{display:false},ticks:{maxRotation:30,minRotation:0,font:{size:10}}},
+      y:{beginAtZero:true,max:60,grid:{color:"rgba(39,48,77,.5)"}}
+    }
+  }
+});
+</script>
+</body>
+</html>
